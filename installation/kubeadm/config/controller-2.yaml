@@ -1,0 +1,43 @@
+apiVersion: kubeadm.k8s.io/v1alpha3
+kind: InitConfiguration
+kubernetesVersion: 1.12.2
+nodeRegistration:
+  kubeletExtraArgs:
+    node-ip: 192.168.10.3
+---
+apiVersion: kubeadm.k8s.io/v1alpha3
+kind: ClusterConfiguration
+kubernetesVersion: 1.12.2
+nodeName: controller-2
+unifiedControlPlaneImage: gcr.io/google_containers/hyperkube:v1.12.2
+apiServerExtraArgs:
+  advertise-address: 192.168.10.3
+  etcd-servers: https://192.168.10.2:2379,https://192.168.10.3:2379,https://192.168.10.4:2379
+apiServerCertSANs:
+  - "192.168.10.1"
+  - "192.168.10.2"
+  - "192.168.10.3"
+  - "192.168.10.4"
+controlPlaneEndpoint: "192.168.10.1:443"
+etcd:
+  local:
+    extraArgs:
+      listen-client-urls: "https://127.0.0.1:2379,https://192.168.10.3:2379"
+      advertise-client-urls: "https://192.168.10.3:2379"
+      listen-peer-urls: "https://192.168.10.3:2380"
+      initial-advertise-peer-urls: "https://192.168.10.3:2380"
+      initial-cluster: "controller-1=https://192.168.10.2:2380,controller-2=https://192.168.10.3:2380"
+      initial-cluster-state: existing
+    serverCertSANs:
+      - controller-2
+      - 192.168.10.3
+    peerCertSANs:
+      - controller-1
+      - controller-2
+      - controller-3
+      - 192.168.10.2
+      - 192.168.10.3
+      - 192.168.10.4
+networking:
+  podSubnet: "10.200.0.0/16"
+clusterName: k8s-kubeadm

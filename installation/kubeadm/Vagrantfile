@@ -1,0 +1,49 @@
+Vagrant.configure("2") do |config|
+
+  config.trigger.after :up do |trigger|
+    trigger.info = "Copying generated certificates from bootstrap controller..."
+    trigger.only_on = "controller-1"
+    trigger.run = { path: "scripts/get-certs.sh" }
+  end
+
+  # Kubernetes Controllers
+  (1..3).each do |i|
+    config.vm.define "controller-#{i}" do |node|
+      node.vm.box         = "centos/7"
+      node.vm.hostname    = "controller-#{i}"
+
+      node.vm.network "private_network", ip: "192.168.10.#{i+1}"
+      node.vm.provision "file", source: "config", destination: "/home/vagrant"
+      node.vm.provision "file", source: "certs", destination: "certs"
+      node.vm.provision "shell", path: "scripts/locale.sh"
+      node.vm.provision "shell", path: "scripts/controller.sh", args: [ "#{i}", "192.168.10.#{i+1}" ]
+
+      node.vm.provider "virtualbox" do |vb|
+          vb.memory = "1024"
+      end
+    end
+  end
+
+  config.trigger.after :up do |trigger|
+    trigger.info = "Installing kube-router..."
+    trigger.only_on = "controller-3"
+    trigger.run_remote = { path: "scripts/kube-router.sh" }
+  end
+
+  # Kubernetes workers
+  (1..4).each do |i|
+    config.vm.define "worker-#{i}" do |node|
+      node.vm.box         = "centos/7"
+      node.vm.hostname    = "worker-#{i}"
+
+      node.vm.network "private_network", ip: "192.168.10.#{i+4}"
+      node.vm.provision "shell", path: "scripts/locale.sh"
+      node.vm.provision "shell", path: "scripts/worker.sh", args: [ "192.168.10.#{i+4}" ]
+
+      node.vm.provider "virtualbox" do |vb|
+          vb.memory = "2048"
+      end
+    end
+  end
+
+end

@@ -1,0 +1,28 @@
+[Unit]
+Description=etcd
+Documentation=https://github.com/coreos
+
+[Service]
+ExecStart=/usr/local/bin/etcd \
+  --name=%ETCD_NAME% \
+  --cert-file=/vagrant/cert/api-server.pem \
+  --key-file=//vagrant/cert//api-server-key.pem \
+  --peer-cert-file=//vagrant/cert//api-server.pem \
+  --peer-key-file=//vagrant/cert//api-server-key.pem \
+  --trusted-ca-file=/vagrant/cert/ca.pem \
+  --peer-trusted-ca-file=/vagrant/cert/ca.pem \
+  --peer-client-cert-auth \
+  --client-cert-auth \
+  --initial-advertise-peer-urls https://%IP%:2380 \
+  --listen-peer-urls https://%IP%:2380 \
+  --listen-client-urls https://%IP%:2379,https://127.0.0.1:2379 \
+  --advertise-client-urls https://%IP%:2379 \
+  --initial-cluster-token etcd-cluster-0 \
+  --initial-cluster controller-1=https://192.168.10.2:2380,controller-2=https://192.168.10.3:2380,controller-3=https://192.168.10.4:2380 \
+  --initial-cluster-state new \
+  --data-dir=/var/lib/etcd
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
