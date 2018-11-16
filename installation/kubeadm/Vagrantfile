@@ -31,7 +31,7 @@ Vagrant.configure("2") do |config|
   end
 
   # Kubernetes workers
-  (1..4).each do |i|
+  (1..2).each do |i|
     config.vm.define "worker-#{i}" do |node|
       node.vm.box         = "centos/7"
       node.vm.hostname    = "worker-#{i}"

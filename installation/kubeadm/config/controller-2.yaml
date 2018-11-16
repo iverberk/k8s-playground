@@ -1,15 +1,15 @@
 apiVersion: kubeadm.k8s.io/v1alpha3
 kind: InitConfiguration
-kubernetesVersion: 1.12.2
+kubernetesVersion: 1.11.3
 nodeRegistration:
   kubeletExtraArgs:
     node-ip: 192.168.10.3
 ---
 apiVersion: kubeadm.k8s.io/v1alpha3
 kind: ClusterConfiguration
-kubernetesVersion: 1.12.2
+kubernetesVersion: 1.11.3
 nodeName: controller-2
-unifiedControlPlaneImage: gcr.io/google_containers/hyperkube:v1.12.2
+unifiedControlPlaneImage: gcr.io/google_containers/hyperkube:v1.11.3
 apiServerExtraArgs:
   advertise-address: 192.168.10.3
   etcd-servers: https://192.168.10.2:2379,https://192.168.10.3:2379,https://192.168.10.4:2379

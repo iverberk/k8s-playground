@@ -6,7 +6,6 @@ enabled=1
 gpgcheck=1
 repo_gpgcheck=1
 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-exclude=kube*
 EOF
 
 # Set SELinux in permissive mode (effectively disabling it)
@@ -14,7 +13,9 @@ setenforce 0
 sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
 
 yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes docker-ce-0:18.06.1.ce-3.el7.x86_64 ipvsadm
+# yum-config-manager --add-repo https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+
+yum install -y kubelet-1.11.4-0 kubeadm kubectl-1.11.4-0 --disableexcludes=kubernetes docker-ce-0:18.06.1.ce-3.el7.x86_64 ipvsadm
 
 systemctl enable kubelet docker && systemctl start kubelet docker
 
