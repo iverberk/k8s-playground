@@ -13,7 +13,6 @@ setenforce 0
 sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
 
 yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-# yum-config-manager --add-repo https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
 
 yum install -y kubelet-1.11.4-0 kubeadm kubectl-1.11.4-0 --disableexcludes=kubernetes docker-ce-0:18.06.1.ce-3.el7.x86_64 ipvsadm
 
