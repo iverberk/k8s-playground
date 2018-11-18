@@ -1,5 +1,6 @@
 #!/bin/bash -e
 
+if [ -z ${KUBECONFIG+x} ]; then echo "Please make sure that your KUBECONFIG is set"; exit 1; fi
 if [ -z ${1+x} ]; then echo "Please provide a version for the upgrade"; exit 1; fi
 
 # This script can be used to upgrade from 1.11 to 1.12
@@ -33,7 +34,7 @@ do
 
 done
 
-kubectl delete --kubeconfig=/etc/kubernetes/admin.conf -n kube-system ds kube-proxy
+kubectl delete -n kube-system ds kube-proxy
 
 for index in 1 2 3
 do
